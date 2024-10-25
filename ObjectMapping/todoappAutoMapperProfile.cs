@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-
+using todoapp.Entities.Models;
+using todoapp.Services.Dtos;
 namespace todoapp.ObjectMapping;
 
 public class todoappAutoMapperProfile : Profile
 {
     public todoappAutoMapperProfile()
     {
-        /* Create your AutoMapper object mappings here */
+        CreateMap<TodoItem, TodoItemDto>();
     }
 }

@@ -9,11 +9,11 @@ namespace todoapp.Services
         private readonly Lazy<ITodoService> _todoService;
 
 
-        public ServiceManager(IRepositoryManager repositoryManager)
+        public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
 
         {
             _todoService = new Lazy<ITodoService>(() =>
-                    new TodoService(repositoryManager));
+                    new TodoService(repositoryManager, mapper));
         }
 
         public ITodoService TodoService => _todoService.Value;

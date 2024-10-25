@@ -9,6 +9,6 @@ namespace todoapp.Entities.Models
         [Column("TodoItemId")]
         public Guid Id { get; set; }
         [MaxLength(60, ErrorMessage = "Maximum length for Text is 60 characters")]
-        public string Text { get; set; }
+        public string? Text { get; set; }
     }
 }

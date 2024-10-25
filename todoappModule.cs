@@ -52,6 +52,10 @@ using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.Studio.Client.AspNetCore;
+using todoapp.Repository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace todoapp;
 
@@ -152,10 +156,21 @@ namespace todoapp;
         todoappEfCoreEntityExtensionMappings.Configure();
     }
 
+
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
+
+        // Connection with MYSQL Server
+        context.Services.AddDbContext<RepositoryContext>(options =>
+        {
+            options.UseMySql(
+               configuration.GetConnectionString("mysqlConnection"),
+               new MySqlServerVersion(new Version(8, 0, 21))
+           );
+
+        });
 
         if (!hostingEnvironment.IsProduction())
         {

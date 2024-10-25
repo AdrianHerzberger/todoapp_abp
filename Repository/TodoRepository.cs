@@ -25,6 +25,7 @@ namespace todoapp.Repository
             await FindByCondition(x => ids.Contains(x.Id), trackChanges)
             .ToListAsync();
 
+
         public void DeleteTodoItem(TodoItem item) => Delete(item);
     }
 }

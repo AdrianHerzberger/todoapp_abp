@@ -1,5 +1,5 @@
-﻿using todoapp.Entities.Models; 
-using Volo.Abp.Domain.Repositories;
+﻿using AutoMapper;
+using todoapp.Entities.Models;
 using Volo.Abp.Application.Services;
 using todoapp.Services.Dtos;
 using todoapp.Service.Contracts;
@@ -11,34 +11,26 @@ namespace todoapp.Services
     {
  
         private readonly IRepositoryManager _repository;
+        private readonly IMapper _mapper;
 
-        public TodoService(IRepositoryManager repository) 
+        public TodoService(IRepositoryManager repository, IMapper mapper) 
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<TodoItemDto>> GetAllTodosAsync(bool trackChanges)
         {
             var todoItems = await _repository.TodoItem.GetAllTodosAsync(trackChanges);
+            var todoItemsDto = _mapper.Map<IEnumerable<TodoItemDto>>(todoItems);
 
-            return todoItems
-                .Select(item => new TodoItemDto
-                {
-                    Id = item.Id,
-                    Text = item.Text
-
-                }).ToList(); 
+            return todoItemsDto;
         }
 
         public async Task<TodoItemDto> GetTodoAsync(Guid id, bool trackChanges)
         {
             var todoItem = await _repository.TodoItem.GetTodoItemAsync(id, trackChanges);
-
-            var todoItemDto = new TodoItemDto
-            {
-                Id = todoItem.Id,
-                Text = todoItem.Text,
-            };
+            var todoItemDto = _mapper.Map<TodoItemDto>(todoItem);
 
             return todoItemDto;
         }
@@ -46,19 +38,14 @@ namespace todoapp.Services
         public async Task<TodoItemDto> CreateTodoAsync(TodoItemDto todoItem)
         {
 
-            var todoItemEntity = new TodoItem
-            {
-                Text = todoItem.Text,
-            };
+            var todoItemEntity = _mapper.Map<TodoItem>(todoItem);
 
             _repository.TodoItem.CreateTodoItem(todoItemEntity);
             await _repository.SaveAsync();
 
-            return new TodoItemDto
-            {
-                Id = todoItemEntity.Id,
-                Text = todoItemEntity.Text
-            };
+            var todoItemToReturn = _mapper.Map<TodoItemDto>(todoItemEntity);
+
+            return todoItemToReturn;
         }
 
         public async Task DeleteTodoAsync(Guid id, bool trackChanges)
@@ -69,9 +56,10 @@ namespace todoapp.Services
             await _repository.SaveAsync();
         }
 
-        public async Task UpdateTodoAsync(Guid id,  TodoItemDto todoItem, bool trackChanges)
+        public async Task UpdateTodoAsync(Guid id,  TodoItemDto todoItemForUpdate, bool trackChanges)
         {
-            await _repository.TodoItem.GetTodoItemAsync(id, trackChanges);
+            var todoItem = await _repository.TodoItem.GetTodoItemAsync(id, trackChanges); 
+            _mapper.Map(todoItemForUpdate, todoItem);
             await _repository.SaveAsync();
         }
     }

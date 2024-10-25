@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using todoapp.Entities.Models;
 using todoapp.Repository.Configuration;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -16,6 +17,6 @@ namespace todoapp.Repository
             modelBuilder.ApplyConfiguration(new TodoConfiguration());
         }
 
-
+        public DbSet<TodoItem>? TodoItems { get; set; }
     }
 }
