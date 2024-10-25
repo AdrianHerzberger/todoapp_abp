@@ -1,0 +1,29 @@
+# Build files
+bin/
+obj/
+
+# Node modules
+node_modules/
+
+# Static assets (if built automatically, otherwise remove this)
+wwwroot/
+
+# User-specific project settings
+*.csproj.user
+
+# Logs
+Logs/
+
+# Package lock files
+yarn.lock
+package-lock.json
+
+# ABP package file
+todoapp.abppkg
+
+# Local development settings
+appsettings.json
+appsettings.Development.json
+
+# Docker
+Dockerfile.local
