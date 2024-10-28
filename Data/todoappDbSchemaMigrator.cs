@@ -1,5 +1,6 @@
 ﻿using Volo.Abp.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using todoapp.Repository;
 
 namespace todoapp.Data;
 
@@ -23,7 +24,7 @@ public class todoappDbSchemaMigrator : ITransientDependency
          */
 
         await _serviceProvider
-            .GetRequiredService<todoappDbContext>()
+            .GetRequiredService<RepositoryContext>()
             .Database
             .MigrateAsync();
 

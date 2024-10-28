@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using todoapp.Data;
 
 namespace todoapp.Repository
 {
@@ -7,6 +8,7 @@ namespace todoapp.Repository
     {
         public RepositoryContext CreateDbContext(string[] args)
         {
+            todoappEfCoreEntityExtensionMappings.Configure();
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")

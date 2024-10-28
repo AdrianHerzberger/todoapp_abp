@@ -32,7 +32,6 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.PermissionManagement.Identity;
-using Volo.Abp.SettingManagement;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
@@ -54,8 +53,6 @@ using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.Studio.Client.AspNetCore;
 using todoapp.Repository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace todoapp;
 
@@ -161,16 +158,6 @@ namespace todoapp;
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
-
-        // Connection with MYSQL Server
-        context.Services.AddDbContext<RepositoryContext>(options =>
-        {
-            options.UseMySql(
-               configuration.GetConnectionString("mysqlConnection"),
-               new MySqlServerVersion(new Version(8, 0, 21))
-           );
-
-        });
 
         if (!hostingEnvironment.IsProduction())
         {
@@ -355,7 +342,7 @@ namespace todoapp;
 
     private void ConfigureEfCore(ServiceConfigurationContext context)
     {
-        context.Services.AddAbpDbContext<todoappDbContext>(options =>
+        context.Services.AddAbpDbContext<RepositoryContext>(options =>
         {
             /* You can remove "includeAllEntities: true" to create
              * default repositories only for aggregate roots
@@ -364,14 +351,19 @@ namespace todoapp;
             options.AddDefaultRepositories(includeAllEntities: true);
         });
 
+        var configuration = context.Services.GetConfiguration();
+
+        // Specify the MySQL server version
         Configure<AbpDbContextOptions>(options =>
         {
-            options.Configure(configurationContext =>
+            options.Configure(dbContextOptions =>
             {
-                configurationContext.UseSqlServer();
+                dbContextOptions.DbContextOptions.UseMySql(
+                    configuration.GetConnectionString("mysqlConnection"),
+                    new MySqlServerVersion(new Version(8, 0, 21)) 
+                );
             });
         });
-        
     }
 
 

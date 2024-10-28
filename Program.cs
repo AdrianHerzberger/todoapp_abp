@@ -43,10 +43,6 @@ public class Program
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
 
-            // Configure DbContext outside controller registration block
-            builder.Services.AddDbContext<RepositoryContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
             // Register repository and services with .NET Core DI
             builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
             builder.Services.AddScoped<ITodoService, TodoService>();

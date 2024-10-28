@@ -7,12 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using todoapp.Data;
+using todoapp.Repository;
 
 #nullable disable
 
 namespace todoapp.Migrations
 {
-    [DbContext(typeof(todoappDbContext))]
+    [DbContext(typeof(RepositoryContext))]
     [Migration("20241022151116_InitialMigration")]
     partial class InitialMigration
     {
