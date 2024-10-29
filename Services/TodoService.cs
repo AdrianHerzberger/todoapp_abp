@@ -9,14 +9,16 @@ namespace todoapp.Services
 {
     public class TodoService : ApplicationService, ITodoService
     {
- 
+
         private readonly IRepositoryManager _repository;
+        private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
 
-        public TodoService(IRepositoryManager repository, IMapper mapper) 
+        public TodoService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper) 
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<TodoItemDto>> GetAllTodosAsync(bool trackChanges)

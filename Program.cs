@@ -13,6 +13,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using todoapp.Contracts;
 using todoapp.Repository;
+using NLog;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace todoapp;
@@ -37,15 +38,14 @@ public class Program
         try
         {
             var builder = WebApplication.CreateBuilder(args);
+            LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
             // Add custom services to the container 
             builder.Services.ConfigureRepositoryManager();
+            builder.Services.ConfigureIISIntegration();
+            builder.Services.ConfigureLoggerService();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
-
-            // Register repository and services with .NET Core DI
-            builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
-            builder.Services.AddScoped<ITodoService, TodoService>();
 
             // Add controllers to the service container
             builder.Services.AddControllers()
@@ -72,23 +72,14 @@ public class Program
                     }
                 });
 
-            // Register your Autofac modules or services
-            builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
-            {
-                // Register ITodoService and enable interface-based interceptors only once
-                containerBuilder.RegisterType<TodoService>()
-                    .As<ITodoService>()  // Register as interface
-                    .EnableInterfaceInterceptors();  // Enable interface interception
-
-                // More services here
-            });
-
             if (IsMigrateDatabase(args))
             {
                 builder.Services.AddDataMigrationEnvironment();
             }
             await builder.AddApplicationAsync<todoappModule>();
             var app = builder.Build();
+            var logger = app.Services.GetRequiredService<ILoggerManager>();
+            app.ConfigureExceptionHandler(logger);
             await app.InitializeApplicationAsync();
 
             if (IsMigrateDatabase(args))

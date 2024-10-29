@@ -13,6 +13,7 @@ wwwroot/
 
 # Logs
 Logs/
+internal_logs/
 
 # Package lock files
 yarn.lock
